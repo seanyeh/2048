@@ -1,4 +1,5 @@
-function KeyboardInputManager() {
+function KeyboardInputManager(playerID) {
+  this.playerID = playerID || 0;
   this.events = {};
 
   if (window.navigator.msPointerEnabled) {
@@ -75,7 +76,7 @@ KeyboardInputManager.prototype.listen = function () {
 
   // Respond to swipe events
   var touchStartClientX, touchStartClientY;
-  var gameContainer = document.getElementsByClassName("game-container")[0];
+  var gameContainer = document.getElementsByClassName("game-container")[this.playerID];
 
   gameContainer.addEventListener(this.eventTouchstart, function (event) {
     if ((!window.navigator.msPointerEnabled && event.touches.length > 1) ||

@@ -1,5 +1,7 @@
-function HTMLActuator() {
-  this.tileContainer    = document.querySelector(".tile-container");
+function HTMLActuator(playerID) {
+  this.playerID = playerID || 0;
+  // this.tileContainer    = document.querySelector(".tile-container");
+  this.tileContainer    = document.getElementsByClassName("tile-container")[this.playerID];
   this.scoreContainer   = document.querySelector(".score-container");
   this.bestContainer    = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");

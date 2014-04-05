@@ -1,14 +1,19 @@
-function GameManager(size, InputManager, Actuator, StorageManager) {
+function GameManager(size, InputManager, Actuator, StorageManager, playerID, socket) {
+  this.playerID       = playerID;
   this.size           = size; // Size of the grid
-  this.inputManager   = new InputManager;
+  this.inputManager   = new InputManager(playerID);
   this.storageManager = new StorageManager;
-  this.actuator       = new Actuator;
+  this.actuator       = new Actuator(playerID);
 
   this.startTiles     = 2;
 
-  this.inputManager.on("move", this.move.bind(this));
-  this.inputManager.on("restart", this.restart.bind(this));
-  this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  if (this.inputManager){
+      this.inputManager.on("move", this.move.bind(this));
+      this.inputManager.on("restart", this.restart.bind(this));
+      this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
+  }
+
+  this.socket = socket;
 
   this.setup();
 }
@@ -36,8 +41,8 @@ GameManager.prototype.isGameTerminated = function () {
 };
 
 // Set up the game
-GameManager.prototype.setup = function () {
-  var previousState = this.storageManager.getGameState();
+GameManager.prototype.setup = function (gameState) {
+  var previousState = gameState || this.storageManager.getGameState();
 
   // Reload the game from a previous game if present
   if (previousState) {
@@ -191,6 +196,9 @@ GameManager.prototype.move = function (direction) {
     }
 
     this.actuate();
+
+    // SEND GAME STATE
+    this.socket.emit('move', this.storageManager.getGameState());
   }
 };
 
